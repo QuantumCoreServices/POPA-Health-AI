@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_backend:
+    name: Build and Deploy Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      
+      # Uncomment to run your tests
+      #- name: Run Backend Tests
+      #  run: |
+      #    cd backend
+      #    pytest
+
+      - name: Build Docker Image for Backend
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}/popa-backend:latest ./backend
+      
+      - name: Login to AWS ECR (Backend)
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+      
+      - name: Push Docker Image to ECR (Backend)
+        run: |
+          docker push ${{ secrets.ECR_REGISTRY }}/popa-backend:latest
+      
+      - name: Update Kubernetes Deployment (Backend)
+        run: |
+          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }}
+          kubectl set image deployment/popa-backend popa-backend=${{ secrets.ECR_REGISTRY }}/popa-backend:latest
+
+  build_and_deploy_frontend:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      
+      - name: Install Frontend Dependencies and Build
+        run: |
+          cd frontend
+          npm install
+          npm run build
+      
+      - name: Build Docker Image for Frontend
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}/popa-frontend:latest ./frontend
+      
+      - name: Login to AWS ECR (Frontend)
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+      
+      - name: Push Docker Image to ECR (Frontend)
+        run: |
+          docker push ${{ secrets.ECR_REGISTRY }}/popa-frontend:latest
+      
+      - name: Update Kubernetes Deployment (Frontend)
+        run: |
+          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }}
+          kubectl set image deployment/popa-frontend popa-frontend=${{ secrets.ECR_REGISTRY }}/popa-frontend:latest
