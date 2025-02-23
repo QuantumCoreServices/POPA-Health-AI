@@ -1,4 +1,4 @@
-  GNU nano 5.6.1      .terraform.lock.hcl                
+           
 provider "registry.terraform.io/hashicorp/aws" {
   version = "5.88.0"
   hashes = [
