@@ -48,3 +48,52 @@ The system is designed with a microservices approach:
 
 ## Project Structure
 
+popa-Health-AI/ ├── backend/ # FastAPI backend service │ ├── app/ │ │ ├── main.py # Entry point for the FastAPI app │ │ ├── routes/ # API routes (appointments, auth, AI services, etc.) │ │ ├── models/ # Database models │ │ └── services/ # Business logic and external integrations │ ├── Dockerfile # Docker configuration for backend │ └── requirements.txt # Python dependencies ├── frontend/ # React frontend application │ ├── src/ │ │ ├── components/ # UI components and animated dashboards │ │ ├── pages/ # Page-level components │ │ └── services/ # API call utilities │ ├── Dockerfile # Docker configuration for frontend │ ├── package.json # Node.js dependencies │ └── README.md # Frontend documentation ├── infrastructure/ # Terraform files for AWS infrastructure │ ├── main.tf # Main Terraform configuration │ ├── variables.tf # Terraform variables │ └── outputs.tf # Terraform outputs ├── .github/ # GitHub Actions workflows for CI/CD │ └── workflows/ │ └── ci-cd.yml # CI/CD pipeline configuration ├── .gitignore # Files and folders to ignore └── README.md # This file
+
+
+
+## Setup & Installation
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/Obionedonthoeme/POPA-Health-AI.git
+   cd POPA-Health-AI
+
+cd backend
+
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+
+
+uvicorn app.main:app --reload
+
+
+
+npm install
+npm run dev
+
+
+# Deployment
+# Infrastructure:
+# Use Terraform to provision your AWS resources. From the infrastructure directory, run:
+terraform init
+terraform apply
+
+
+# Containerization & Orchestration:
+Build Docker images for both the backend and frontend, and deploy them on AWS EKS using the provided Kubernetes manifests.
+
+# CI/CD Pipeline
+The project is integrated with GitHub Actions for continuous integration and deployment. Every push to the master branch triggers the CI/CD workflow defined in .github/workflows/ci-cd.yml.
+
+# The workflow builds Docker images.
+# Pushes images to AWS ECR.
+# Deploys updated images to AWS EKS.
+
+
+
+
