@@ -78,8 +78,8 @@ npm run dev
 
 
 # Deployment
-# Infrastructure:
-# Use Terraform to provision your AWS resources. From the infrastructure directory, run:
+ Infrastructure: Use Terraform to provision your AWS resources. From the infrastructure directory, run:
+
 terraform init
 terraform apply
 
@@ -90,9 +90,9 @@ Build Docker images for both the backend and frontend, and deploy them on AWS EK
 # CI/CD Pipeline
 The project is integrated with GitHub Actions for continuous integration and deployment. Every push to the master branch triggers the CI/CD workflow defined in .github/workflows/ci-cd.yml.
 
-# The workflow builds Docker images.
-# Pushes images to AWS ECR.
-# Deploys updated images to AWS EKS.
+ The workflow builds Docker images.
+ Pushes images to AWS ECR.
+ Deploys updated images to AWS EKS.
 
 
 
